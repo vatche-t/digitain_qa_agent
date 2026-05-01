@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 venv/
 .env
+.claude/
 
 # uv
 .python-version
@@ -17,6 +18,7 @@ reports/
 .bot-state/
 docs/strategic_brief_appendix.pdf
 docs/strategic_brief.original_before_appendix.pdf
+test_cases.before*.xlsx
 
 # IDE
 .idea/

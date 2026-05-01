@@ -1,0 +1,52 @@
+Subject: Digitain AI QA Automation Assignment - Submission
+
+Hello,
+
+Please find my completed Digitain AI QA Automation assignment in this repository.
+
+This project is an AI-assisted QA automation system for TotoGaming.ro. It was built to show not only browser automation, but also the judgment needed for a regulated iGaming product: safe dry-run execution, clear handling of blocked cases, evidence-based reports, and business-risk explanation.
+
+What is included:
+
+1. Strategic brief
+   File: docs/strategic_brief.pdf
+
+   This is the main business and technical explanation document. It explains the architecture, why the project was designed this way, how the AI planner / Playwright executor / judge / reporter flow works, and why safety rails are necessary for real-money gambling QA. I expanded it with detailed appendix pages explaining each test, the latest execution evidence, blocked-test reasoning, the Telegram bot workflow, and the Excel updates.
+
+2. Test cases workbook
+   File: test_cases.xlsx
+
+   This is the final Excel workbook. It contains the original simple and complex tests, plus added explanation columns that describe how each test is executed, why some tests are blocked, and what is required to complete them fully. It also includes a new sheet with additional risk-based test ideas tied to compliance, revenue, user trust, mobile behavior, payments, and AML/fraud risk.
+
+3. CLI automation runner
+   Main command:
+   uv run python -m src.main --xlsx test_cases.xlsx --provider openai --model gpt-4o --headless false
+
+   The CLI reads the Excel file, runs the selected tests through the QA agent, and writes HTML/JSON reports. It supports filters such as simple tests, complex tests, tags, and specific test IDs.
+
+4. Telegram bot interface
+   Bot URL: @QA_TOTO_bot
+   Reviewer user login code: qa-user-2026
+
+   The project also works through a Telegram bot. The bot lets authorized users run all tests, simple tests, complex tests, category tests, or a specific test ID. It sends the final HTML and JSON reports back to the chat. The bot keeps dry-run safety enabled and does not expose real-money actions.
+
+   Telegram user guide:
+   docs/telegram_bot_user_guide.pdf
+
+5. Source code
+   src/agent.py - browser automation, safety rails, deterministic test handlers
+   src/main.py - CLI entry point
+   src/test_loader.py - Excel loading and test filtering
+   src/reporter.py - HTML/JSON report generation
+   src/bot.py and src/bot_*.py - Telegram bot, access control, job runner, menus, report delivery
+
+Why the project was made this way:
+
+The key idea is to keep the test cases business-readable in Excel while making execution automated and evidence-driven. In regulated gambling QA, not every test should be forced to run on production. Some tests require a self-excluded account, a Time Out account, SMS OTP test fixtures, payment sandbox access, or staging funds. The project reports those as blocked with exact completion requirements instead of pretending they passed.
+
+This demonstrates both technical automation ability and business judgment: the system can run safe production checks today, produce reports for stakeholders, and clearly define what the operator must provide for full regulated end-to-end validation.
+
+Thank you for reviewing my assignment.
+
+Best regards,
+Vatche

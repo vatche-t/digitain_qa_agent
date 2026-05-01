@@ -33,6 +33,10 @@ REPORT_JSON = ROOT / "reports/full_rerun_20260501_213043_column_notes/report.jso
 
 def main() -> None:
     if not ORIGINAL_PDF.exists():
+        if pdf_appears_expanded(BASE_PDF):
+            print(f"{BASE_PDF} already appears to include the appendix; nothing to rebuild.")
+            print(f"To rebuild from scratch, provide {ORIGINAL_PDF}.")
+            return
         shutil.copy2(BASE_PDF, ORIGINAL_PDF)
 
     appendix_story = build_story()
@@ -43,6 +47,19 @@ def main() -> None:
     print(f"updated {BASE_PDF} ({page_count} pages)")
     print(f"backup {ORIGINAL_PDF}")
     print(f"appendix {APPENDIX_PDF}")
+
+
+def pdf_appears_expanded(path: Path) -> bool:
+    if not path.exists():
+        return False
+    try:
+        reader = PdfReader(str(path))
+        if len(reader.pages) > 2:
+            return True
+        text = "\n".join((page.extract_text() or "") for page in reader.pages)
+        return "Strategic Brief Appendix" in text
+    except Exception:
+        return False
 
 
 def styles() -> dict[str, ParagraphStyle]:
@@ -349,6 +366,11 @@ def telegram_pages(s: dict[str, ParagraphStyle]) -> list:
             "browser job runs at a time, reports are sent back as artifacts, and dry-run safety "
             "is always enforced from Telegram.",
             s["body"],
+        ),
+        Paragraph(
+            "Reviewer access: bot URL @QA_TOTO_bot, regular user login code qa-user-2026. "
+            "The admin bootstrap code is intentionally not included in the public handoff.",
+            s["callout"],
         ),
         table(
             [
