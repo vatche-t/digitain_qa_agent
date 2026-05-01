@@ -325,6 +325,18 @@ The site is geo-blocked to Romania. To run for real:
 3. Provide credentials for a dedicated **staging account** via env vars referenced by your test data.
 4. `python -m src.main --xlsx test_cases.xlsx`
 
+`PROXY_URL` supports plain and authenticated proxy URLs:
+
+```env
+PROXY_URL=http://host:port
+PROXY_URL=http://username:password@host:port
+PROXY_URL=socks5://username:password@host:port
+```
+
+For the live TotoGaming checks, prefer a Romania residential or ISP-style proxy
+with sticky sessions over a shared datacenter proxy. The browser context already
+uses Romanian locale/timezone settings; `PROXY_URL` controls the network exit.
+
 If the CDN returns an access denial (for example HTTP 403 from Akamai), the agent
 records the case as `blocked`, captures a screenshot/trace, and writes the
 evidence into the report instead of spending LLM tokens on a page it cannot test.

@@ -33,6 +33,7 @@ import time
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Literal
+from urllib.parse import unquote, urlsplit, urlunsplit
 
 from playwright.async_api import (
     Browser,
@@ -332,7 +333,7 @@ class QAAgent:
             },
         }
         if self.proxy_url:
-            context_options["proxy"] = {"server": self.proxy_url}
+            context_options["proxy"] = self._proxy_options(self.proxy_url)
 
         context = await browser.new_context(**context_options)
         # Override the webdriver flag that Akamai checks
@@ -341,6 +342,31 @@ class QAAgent:
         )
         page = await context.new_page()
         return browser, context, page
+
+    def _proxy_options(self, proxy_url: str) -> dict[str, str]:
+        """Parse PROXY_URL into Playwright's proxy shape.
+
+        Accepts both:
+          - http://host:port
+          - http://user:pass@host:port
+          - socks5://user:pass@host:port
+        """
+        parsed = urlsplit(proxy_url)
+        if not parsed.scheme or not parsed.hostname:
+            return {"server": proxy_url}
+
+        host = parsed.hostname
+        if parsed.port:
+            host = f"{host}:{parsed.port}"
+        server = urlunsplit((parsed.scheme, host, "", "", ""))
+        options = {"server": server}
+
+        if parsed.username:
+            options["username"] = unquote(parsed.username)
+        if parsed.password:
+            options["password"] = unquote(parsed.password)
+
+        return options
 
     async def _execute(self, case: TestCase, page: Page) -> list[StepResult]:
         """Plan with the LLM, then execute each action."""
