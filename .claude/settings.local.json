@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(uv run *)",
+      "WebSearch",
+      "WebFetch(domain:totogaming.ro)",
+      "WebFetch(domain:www.zenrows.com)",
+      "WebFetch(domain:windscribe.com)",
+      "Bash(curl *)",
+      "Bash(uv add *)"
+    ]
+  }
+}
