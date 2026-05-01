@@ -150,6 +150,83 @@ uv run python -m src.main \
 This still does not activate self-exclusion and does not submit a payment. It
 only checks that the already-self-excluded account cannot reach/use deposit.
 
+## Telegram QA Bot
+
+The project also includes a Telegram bot wrapper for running the same QA agent
+from a controlled chat interface. It is designed for one admin and two regular
+users. Telegram-triggered runs always keep dry-run safety enabled: the bot does
+not expose `--allow-money` and will not submit real deposits or real bets.
+
+Create a bot with BotFather, put the token and access list in `.env`, then run:
+
+```bash
+uv run python -m src.bot
+```
+
+Minimum `.env` settings:
+
+```env
+TELEGRAM_BOT_TOKEN=123456:abc...
+TELEGRAM_ADMIN_IDS=123456789
+TELEGRAM_ALLOWED_USER_IDS=111111111,222222222
+TELEGRAM_ADMIN_INVITE_CODE=
+TELEGRAM_DEFAULT_PROVIDER=openai
+TELEGRAM_DEFAULT_MODEL=gpt-4o
+TELEGRAM_DEFAULT_HEADLESS=false
+```
+
+Optional invite-code login:
+
+```env
+TELEGRAM_ADMIN_INVITE_CODE=admin-setup-2026
+TELEGRAM_INVITE_CODE=qa-demo-2026
+TELEGRAM_MAX_USERS=2
+```
+
+If a person is not allowlisted, `/start` tells them their Telegram numeric ID.
+If `TELEGRAM_ADMIN_IDS` is empty, the first admin can be created once with:
+
+```text
+/admin_login admin-setup-2026
+```
+
+After an admin exists, admin bootstrap is disabled. The admin can then run:
+
+```text
+/add_user 123456789
+/remove_user 123456789
+/users
+```
+
+User commands:
+
+```text
+/menu
+/login qa-demo-2026
+/run_all
+/run_simple
+/run_complex
+/run_tag betting
+/run_id simple-1
+/run_ids simple-1,complex-3
+/status
+/reports
+/whoami
+```
+
+The bot uses inline menus for the same hierarchy:
+
+```text
+Run tests -> All / Simple / Complex / By category / Specific ID
+Reports   -> Latest report / List reports
+Status    -> current job and latest output
+Admin     -> users and cancellation controls
+```
+
+Each run is executed as a subprocess of the existing CLI and writes artifacts to
+`reports/bot_runs/<run_id>/`. When the run finishes, the bot sends the summary
+plus `report.html` and `report.json` back to the chat.
+
 For the difficult/complex sheet, the production-safe live run is:
 
 ```bash
