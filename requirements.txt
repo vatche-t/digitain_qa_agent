@@ -4,3 +4,5 @@ playwright>=1.40.0
 anthropic>=0.40.0
 openai>=1.50.0
 aiogram>=3.27.0
+reportlab>=4.5.0
+pypdf>=6.10.0
